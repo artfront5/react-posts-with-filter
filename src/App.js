@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Card from './components/Card';
+import Navbar from './components/Navbar';
 
-function App() {
+let allPosts = null;
+function App(props) {
+  const [posts, setPosts] = React.useState([]);
+  React.useEffect(() => {
+    async function fetchAll() {
+      let response = await fetch('http://jsonplaceholder.typicode.com/users');
+      if (!response.ok) throw new Error('Не удалось доставить данные о пользователях');
+      const users = await response.json();
+
+      response = await fetch('http://jsonplaceholder.typicode.com/posts');
+      if (!response.ok) throw new Error('Не удалось доставить данные о статьях');
+      let posts = await response.json();
+      posts = posts.map((post) => {
+        const userArr = users.filter((user) => user.id === post.userId); // находим автора
+        post.author = userArr.length ? userArr[0].name : 'Автор неизвестен';
+        return post;
+      });
+      allPosts = posts;
+      setPosts(posts);
+    }
+    fetchAll();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar setPosts={setPosts} posts={posts} allPosts={allPosts} />
+      <main className="container d-flex justify-content-between flex-wrap mt-5 ">
+        {posts.map((el) => (
+          <Card {...el} />
+        ))}
+      </main>
+    </>
   );
 }
 
