@@ -7,11 +7,11 @@ function App(props) {
   const [posts, setPosts] = React.useState([]);
   React.useEffect(() => {
     async function fetchAll() {
-      let response = await fetch('http://jsonplaceholder.typicode.com/users');
+      let response = await fetch('https://jsonplaceholder.typicode.com/users');
       if (!response.ok) throw new Error('Не удалось доставить данные о пользователях');
       const users = await response.json();
 
-      response = await fetch('http://jsonplaceholder.typicode.com/posts');
+      response = await fetch('https://jsonplaceholder.typicode.com/posts');
       if (!response.ok) throw new Error('Не удалось доставить данные о статьях');
       let posts = await response.json();
       posts = posts.map((post) => {
